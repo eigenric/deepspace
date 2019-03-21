@@ -13,7 +13,7 @@ class Loot
         @nMedals = nMedals
     end
 
-    def getUIversion
+    def getUIVersion
         return FooToUI.new self
     end
 
