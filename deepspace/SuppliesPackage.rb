@@ -14,6 +14,14 @@ class SuppliesPackage
     def self.newCopy(copy)
         new(copy.ammoPower, copy.fuelUnits, copy.shieldPower)
     end
+
+    def to_s()
+        out="SuppliesPackage: "
+        out+="\t ammoPower: #{@ammoPower}"
+        out+="\t fuelUnits: #{@fuelUnits}"
+        out+="\t shieldPower #{@shieldPower}"
+        return out
+    end
 end
 
 end

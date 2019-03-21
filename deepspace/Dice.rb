@@ -37,6 +37,15 @@ class Dice
     def spaceStationMoves?(speed)
         @generator.rand <= speed
     end
+
+    def to_s()
+        out="Dice \n"
+        out+= "\tNHANGARSPROB: #{@NHANGARSPROB}"
+        out+= "\tNSHIELDSPROB: #{@NHANGARSPROB}"
+        out+= "\tNWEAPONSPROB: #{@NHANGARSPROB}"
+        out+= "\tFIRSTSHOTPROB: #{@NHANGARSPROB}"
+        return out
+    end
 end
 
 end

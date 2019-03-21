@@ -26,6 +26,13 @@ class Weapon
             1.0
         end
     end
+
+    def to_s()
+        out="Weapon: #{@name}"
+        out+="\t #{@type}"
+        out+="\t #{@uses}"
+        return out
+    end
 end
 
 end

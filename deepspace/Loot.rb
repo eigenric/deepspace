@@ -12,6 +12,16 @@ class Loot
         @nHangars = nHangars
         @nMedals = nMedals
     end
+
+    def to_s()
+        out="Loot: "
+        out="\t nSupplies: #{@nSupplies}"
+        out="\t nWeapons: #{@nWeapons}"
+        out="\t nShields: #{@nShields}"
+        out="\t nHangars: #{@nHangars}"
+        out="\t nMedals: #{@nMedals}"
+        return out
+    end
 end
 
 end

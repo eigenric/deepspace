@@ -23,6 +23,13 @@ class ShieldBooster
             1.0
         end
     end
+
+    def to_s()
+        out="ShieldBooster: #{@name}"
+        out+="\t #{@boost}"
+        out+="\t #{@uses}"
+        return out
+    end
 end
 
 end
