@@ -27,6 +27,10 @@ class Weapon
         end
     end
 
+    def getUIVersion
+        return WeaponToUI.new self
+    end
+
     def to_s()
         out="Weapon: #{@name}"
         out+="\t #{@type}"

@@ -13,7 +13,11 @@ class Loot
         @nMedals = nMedals
     end
 
-    def to_s()
+    def getUIversion
+        return FooToUI.new self
+    end
+
+    def to_s
         out="Loot: "
         out="\t nSupplies: #{@nSupplies}"
         out="\t nWeapons: #{@nWeapons}"
