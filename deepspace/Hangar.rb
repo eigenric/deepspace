@@ -12,18 +12,41 @@ class Hangar
     end
 
     def spaceAvailable?
+        (@weapons.length + @shieldBoosters) != @maxElements
     end
 
     def addWeapon?(w)
+        if spaceAvailable?
+            @weapons << w
+            true
+        else
+            false
+        end
     end
 
     def addShieldBooster?(sb)
+        if spaceAvailable?
+            @shieldBoosters << w
+            true
+        else
+            false
+        end
     end
 
-    def removeWeapon(w)
+    def removeWeapon(nw)
+        if nw <= @maxElements -1
+            @weapons.delete_at nw
+        else # Quizas esto no sea necesario
+            nil 
+        end
     end
 
-    def removeShieldBooster(s)
+    def removeShieldBooster(ns)
+        if ns <= @maxElements -1
+            @weapons.delete_at ns
+        else
+            nil
+        end
     end
 
     def getUIVersion

@@ -18,6 +18,7 @@ class Damage
     end
 
     def discardWeapon(w)
+        
     end
 
     def discardShieldBooster
