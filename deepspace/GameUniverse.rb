@@ -57,6 +57,10 @@ class GameUniverse
         GameUniverseToUI.new self
     end
 
+    def to_s()
+        getUIVersion().to_s
+    end
+
     private :init_or_aftercombat
 end # class
 

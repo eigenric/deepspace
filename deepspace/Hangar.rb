@@ -50,7 +50,11 @@ class Hangar
     end
 
     def getUIVersion
-        return HangarToUI.new self
+        HangarToUI.new self
+    end
+
+    def to_s
+        getUIVersion().to_s
     end
 
     private :spaceAvailable?

@@ -1,8 +1,8 @@
 module Deepspace
 
 class SpaceStation
-    attr_reader :ammoPower, :fuelUnits, :name, :nMedals, :shieldPower,
-                :pendingDamage, :weapons, :shieldBoosters, :hangar
+    attr_reader :ammoPower, :fuelUnits, :name, :nMedals, :shieldPower \
+                ,:pendingDamage, :weapons, :shieldBoosters, :hangar
     
     attr_writer :loot 
 
@@ -104,6 +104,14 @@ class SpaceStation
     def cleanUpMountedItems()
         @weapons.reject! { |w| w.uses.zero? }
         @shieldBoosters.reject! { |s| s.uses.zero? }
+    end
+
+    def getUIVersion()
+        SpaceStationToUI.new self
+    end
+
+    def to_s
+        getUIVersion().to_s
     end
 
 end # class

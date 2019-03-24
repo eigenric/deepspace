@@ -64,7 +64,7 @@ class Damage
     end
 
     def to_s()
-        Damage
+        getUIVersion().to_s
     end
 
     private_class_method :new

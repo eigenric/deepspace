@@ -14,17 +14,11 @@ class Loot
     end
 
     def getUIVersion
-        return FooToUI.new self
+        FooToUI.new self
     end
 
     def to_s
-        out="Loot: "
-        out="\t nSupplies: #{@nSupplies}"
-        out="\t nWeapons: #{@nWeapons}"
-        out="\t nShields: #{@nShields}"
-        out="\t nHangars: #{@nHangars}"
-        out="\t nMedals: #{@nMedals}"
-        return out
+        getUIVersion().to_s
     end
 end
 
