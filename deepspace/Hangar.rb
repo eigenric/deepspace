@@ -93,10 +93,14 @@ if $0 == __FILE__
 
     puts "Espacio disponible (10/10)?: #{ hangar.send :spaceAvailable? } "
 
-    p hangar.to_s
+    puts "Hangar: #{ hangar }"
+    puts "Eliminando arma..."
     hangar.removeWeapon 3
-    p hangar
-    hangar.removeShieldBooster 5
-
+    puts "Hangar: #{ hangar }"
+    puts "Eliminando potenciador de escudo.."
+    if (hangar.removeShieldBooster(5).nil?)
+        puts "Posición incorrecta"
+    end
+    puts "Espacio disponible (9/10)?: #{ hangar.send :spaceAvailable? } "
    
 end
