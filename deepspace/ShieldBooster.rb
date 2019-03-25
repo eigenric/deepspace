@@ -1,4 +1,5 @@
 #encoding: utf-8
+require_relative 'lib/ShieldToUI'
 
 module Deepspace
 
@@ -24,11 +25,12 @@ class ShieldBooster
         end
     end
 
+    def getUIversion
+        ShieldToUI.new self
+    end
+
     def to_s()
-        out="ShieldBooster: #{@name}"
-        out+="\t #{@boost}"
-        out+="\t #{@uses}"
-        return out
+        getUIversion().to_s
     end
 end
 
