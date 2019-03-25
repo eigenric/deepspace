@@ -53,12 +53,12 @@ class GameUniverse
         @currentStation.nMedals == 10
     end
 
-    def getUIVersion()
+    def getUIversion()
         GameUniverseToUI.new self
     end
 
     def to_s()
-        getUIVersion().to_s
+        getUIversion().to_s
     end
 
     private :init_or_aftercombat

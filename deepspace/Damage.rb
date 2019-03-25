@@ -59,12 +59,12 @@ class Damage
         self.new(adjustedWeapons, s.length)
     end
 
-    def getUIVersion()
+    def getUIversion()
         DamageToUI.new self
     end
 
     def to_s()
-        getUIVersion().to_s
+        getUIversion().to_s
     end
 
     private_class_method :new

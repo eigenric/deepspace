@@ -1,4 +1,5 @@
 # encoding:utf-8
+require_relative 'lib/WeaponToUI'
 
 module Deepspace
 
@@ -27,12 +28,12 @@ class Weapon
         end
     end
 
-    def getUIVersion
+    def getUIversion
         WeaponToUI.new self
     end
 
     def to_s
-        getUIVersion().to_s
+        getUIversion().to_s
     end
 end
 

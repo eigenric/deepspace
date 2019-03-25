@@ -106,12 +106,12 @@ class SpaceStation
         @shieldBoosters.reject! { |s| s.uses.zero? }
     end
 
-    def getUIVersion()
+    def getUIversion()
         SpaceStationToUI.new self
     end
 
     def to_s
-        getUIVersion().to_s
+        getUIversion().to_s
     end
 
 end # class
