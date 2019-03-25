@@ -4,7 +4,7 @@ require_relative 'lib/WeaponToUI'
 module Deepspace
 
 class Weapon
-    attr_accessor :name, :type, :uses
+    attr_reader :type, :uses
 
     def initialize(name, type, uses)
         @name = name
@@ -17,12 +17,13 @@ class Weapon
     end
 
     def power()
-        @type.boost
+        @type.power
     end
 
     def useIt()
         if @uses > 0
             @uses -= 1
+            power()
         else
             1.0
         end
