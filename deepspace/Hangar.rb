@@ -1,3 +1,5 @@
+require_relative 'lib/HangarToUI'
+
 module Deepspace
 
 class Hangar
@@ -5,6 +7,8 @@ class Hangar
 
     def initialize(capacity)
         @maxElements = capacity
+        @weapons = []
+        @shieldBoosters = []
     end
 
     def self.newCopy(copy)
@@ -12,7 +16,7 @@ class Hangar
     end
 
     def spaceAvailable?
-        (@weapons.length + @shieldBoosters) != @maxElements
+        (@weapons.length + @shieldBoosters.length) != @maxElements
     end
 
     def addWeapon?(w)
@@ -26,7 +30,7 @@ class Hangar
 
     def addShieldBooster?(sb)
         if spaceAvailable?
-            @shieldBoosters << w
+            @shieldBoosters << sb
             true
         else
             false
@@ -43,18 +47,18 @@ class Hangar
 
     def removeShieldBooster(ns)
         if ns <= @maxElements -1
-            @weapons.delete_at ns
+            @shieldBoosters.delete_at ns
         else
             nil
         end
     end
 
-    def getUIVersion
+    def getUIversion
         HangarToUI.new self
     end
 
     def to_s
-        getUIVersion().to_s
+        getUIversion().to_s
     end
 
     private :spaceAvailable?
@@ -62,3 +66,37 @@ class Hangar
 end # class
 
 end # module
+
+if $0 == __FILE__
+    require_relative 'Weapon'
+    require_relative 'ShieldBooster'
+    require_relative 'WeaponType'
+
+
+    hangar=Deepspace::Hangar.new(10)
+
+    types = [Deepspace::WeaponType::LASER, Deepspace::WeaponType::MISSILE, Deepspace::WeaponType::PLASMA]
+
+    4.times do |i|
+        w = Deepspace::Weapon.new "Arma #{i}", types[i%3], 4
+        s = Deepspace::ShieldBooster.new "Escudo #{i}", 3.2, 5
+        hangar.addWeapon? w
+        hangar.addShieldBooster? s
+    end
+
+    puts "Espacio disponible (8/10)?: #{ hangar.send :spaceAvailable? } "
+
+    w = Deepspace::Weapon.new "Arma 10", Deepspace::WeaponType::MISSILE, 4
+    s = Deepspace::ShieldBooster.new "Escudo 10", 3.9, 5
+    hangar.addWeapon? w
+    hangar.addShieldBooster? s
+
+    puts "Espacio disponible (10/10)?: #{ hangar.send :spaceAvailable? } "
+
+    p hangar.to_s
+    hangar.removeWeapon 3
+    p hangar
+    hangar.removeShieldBooster 5
+
+   
+end
