@@ -1,4 +1,5 @@
 #encoding: utf-8
+require_relative 'lib/LootToUI'
 
 module Deepspace
 
@@ -14,7 +15,7 @@ class Loot
     end
 
     def getUIversion
-        FooToUI.new self
+        LootToUI.new self
     end
 
     def to_s
