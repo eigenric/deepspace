@@ -41,9 +41,9 @@ class Damage
     end
 
     def hasNoEffect?
-        specific_zero = (@nWeapons == 0 && @weapons == nil)
-        numeric_zero = (@nWeapons == -1 && @weapons.empty?)
-        @nShields && (specific_zero || numeric_zero)
+        numeric_zero = (@nWeapons == 0 && @weapons == nil)
+        specific_zero = (@nWeapons == -1 && @weapons.empty?)
+        @nShields == 0 && (specific_zero || numeric_zero)
     end
 
     def arrayContainsType(weapons, wt)
@@ -55,18 +55,17 @@ class Damage
     end
 
     def adjust(weapons, s)
-        nSh = if @nShields < s.length then @nShields else s.length end
+        nSh = [@nShields, s.length].min
 
         if @nWeapons == -1 # Hay lista especifica
-            wCopy = @weapons.clone
+            wCopy = @weapons.clone # Creamos copia para no modificar atributo
             adjustedWeapons = weapons.map do |w|
                 wCopy.delete_at(wCopy.index(w.type) || wCopy.length)
             end
-            adjustedWeapons.compact!
+            adjustedWeapons.compact! # Elimina nils
             self.class.newSpecificWeapons(adjustedWeapons, nSh)
         else
-            nWeap = if @nWeapons < weapons.length then @nWeapons else weapons.length end
-            self.class.newNumericWeapons(nWeap, nSh)
+            self.class.newNumericWeapons([@nWeapons,weapons.length].min, nSh)
         end
     end
 
