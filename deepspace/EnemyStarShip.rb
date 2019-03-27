@@ -60,6 +60,4 @@ if $0 == __FILE__
     puts "Fuego: #{ enemystarship.fire }"
     puts "Resultado disparo: 3.5 #{ enemystarship.receiveShot(3.5) }"
     puts "Resultado disparo: 5.5 #{ enemystarship.receiveShot(5.5) }"
-    
-
 end
