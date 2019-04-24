@@ -4,7 +4,7 @@ require_relative 'lib/WeaponToUI'
 module Deepspace
 
 class Weapon
-    attr_reader :type, :uses
+    attr_reader :name, :type, :uses
 
     def initialize(name, type, uses)
         @name = name
