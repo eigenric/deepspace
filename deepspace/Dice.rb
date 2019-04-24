@@ -1,5 +1,7 @@
 # encoding:utf-8
 
+require_relative 'GameCharacter'
+
 module Deepspace
 
 class Dice
