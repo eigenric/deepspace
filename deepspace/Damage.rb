@@ -41,7 +41,7 @@ class Damage
     end
 
     def hasNoEffect?
-        numeric_zero = (@nWeapons == 0 && @weapons == nil)
+        numeric_zero = (@nWeapons == 0 && @weapons.nil?)
         specific_zero = (@nWeapons == -1 && @weapons.empty?)
         @nShields == 0 && (specific_zero || numeric_zero)
     end
