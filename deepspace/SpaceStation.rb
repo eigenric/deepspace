@@ -14,6 +14,7 @@ class SpaceStation
     def initialize(n, supplies)
         @name = n
         @ammoPower = supplies.ammoPower
+        #assignFuelValue supplies.fuelUnits
         @fuelUnits = supplies.fuelUnits
         @shieldPower = supplies.shieldPower
         @nMedals = 0
@@ -24,9 +25,7 @@ class SpaceStation
     end
 
     def assignFuelValue(f)
-        if f <= @@MAXFUEL
-            @fuelUnits = f
-        end
+        @fuelUnits = f <= @@MAXFUEL ? f : @@MAXFUEL
     end
 
     def cleanPendingDamage()
@@ -37,7 +36,7 @@ class SpaceStation
 
     def receiveWeapon(w)
         unless @hangar.nil?
-            @hangar.addWeapon(h)
+            @hangar.addWeapon?(w)
         else
             false
         end
@@ -45,7 +44,7 @@ class SpaceStation
 
     def receiveShieldBooster(s)
         unless @hangar.nil?
-            @hangar.addShieldsBooster(s)
+            @hangar.addShieldBooster?(s)
         else
             false
         end
@@ -59,14 +58,84 @@ class SpaceStation
         @hangar = nil
     end
 
+    def discardWeapon(i)
+        if i.between?(0, @weapons.size)
+            w = @weapons.delete_at i
+            unless @pendingDamage.nil?
+                @pendingDamage.discardWeapon w
+                cleanPendingDamage
+            end
+        end
+    end
+
+    def discardShieldBooster(i)
+        if i.between?(0, @shieldBoosters.size)
+            @shieldBoosters.delete_at i
+            unless @pendingDamage.nil?
+                @pendingDamage.discardShieldBooster
+                cleanPendingDamage
+            end
+        end
+    end
+
+    def fire()
+        @ammoPower * @weapons.map(&:useIt).reduce(1, :*)
+    end
+
+    def protection()
+        @shieldPower * @shieldBoosters.map(&:useIt).reduce(1, :*)
+    end
+
+    def receiveShot(shot)
+        myProtection = protection()
+        if myProtection >= shot
+            @shieldPower -= @@SHIELDLOSSPERUNITSHOT*shot
+            @shieldPower = [@shieldPower, 0.0].max
+            ShotResult::RESIST
+        else
+            @shieldPower = 0.0
+            ShotResult::DONOTRESIST
+        end
+    end
+
     def receiveSupplies(s)
         @ammoPower += s.ammoPower
-        @fuelUnits += s.fuelUnits
+        assignFuelValue @fuelUnits + s.fuelUnits
         @shieldPower += s.shieldPower
     end
 
     def pendingDamage=(d)
         @pendingDamage = d.adjust(@weapons, @shieldBoosters)
+    end
+
+    def loot=(l)
+        dealer = CardDealer.instance
+        h = l.nHangars
+        if h > 0
+            hangar = dealer.nextHangar
+            receiveHangar hangar
+        end
+
+        elements = l.nSupplies
+        elements.times do |i|
+            sup = dealer.nextSuppliesPackage
+            receiveSupplies sup
+        end
+
+        elements = l.nWeapons
+        elements.times do |i|
+            weap = dealer.nextWeapon
+            receiveWeapon weap
+        end
+
+        elements = l.nShields
+        elements.times do |i|
+            sh = dealer.nextShieldBooster
+            receiveShieldBooster sh
+        end
+
+        medals = l.nMedals
+        @nMedals += medals
     end
 
     def mountWeapon(i)
@@ -91,20 +160,20 @@ class SpaceStation
         @hangar.removeShieldBooster(i) unless @hangar.nil?
     end
 
-    def getSpeed()
+    def speed
         @fuelUnits / @@MAXFUEL.to_f
     end
 
     def move()
-        diff = @fuelUnits-@fuelUnits*getSpeed()
-        @fuelUnits = diff unless diff < 0
+        diff = @fuelUnits-@fuelUnits*speed
+        assignFuelValue diff unless diff < 0
     end
 
     def validState?
         pendingDamage.nil? || pendingDamage.hasNoEffect?
     end
 
-    def cleanUpMountedItems()
+    def cleanUpMountedItems
         @weapons.reject! { |w| w.uses.zero? }
         @shieldBoosters.reject! { |s| s.uses.zero? }
     end
