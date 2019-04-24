@@ -38,7 +38,7 @@ class Hangar
     end
 
     def removeWeapon(nw)
-        if nw <= @maxElements -1
+        if nw.between?(0, @maxElements-1)
             @weapons.delete_at nw
         else # Quizas esto no sea necesario
             nil 
@@ -46,7 +46,7 @@ class Hangar
     end
 
     def removeShieldBooster(ns)
-        if ns <= @maxElements -1
+        if ns.between?(0, @maxElements-1)
             @shieldBoosters.delete_at ns
         else
             nil
