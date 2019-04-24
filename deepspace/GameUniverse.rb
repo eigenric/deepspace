@@ -1,5 +1,8 @@
 require_relative 'lib/GameUniverseToUI'
 require_relative 'lib/GameStateController'
+require_relative 'CombatResult'
+require_relative 'CardDealer'
+require_relative 'SpaceStation'
 require_relative 'Dice'
 
 module Deepspace
@@ -18,40 +21,135 @@ class GameUniverse
         @currentEnemy = nil
     end
 
+    def init(names)
+        state = @gameState.state
+        if state == GameState::CANNOTPLAY
+            dealer = CardDealer.instance
+            names.each do |name|
+                supplies = dealer.nextSuppliesPackage
+                station = SpaceStation.new name, supplies
+                @spaceStations << station
+
+                nh = @dice.initWithNHangars
+                nw = @dice.initWithNWeapons
+                ns = @dice.initWithNShields
+                
+                lo = Loot.new 0, nw, ns, nh, 0
+                station.loot = lo
+            end
+
+            @currentStationIndex = @dice.whoStarts names.size
+            @currentStation = @spaceStations[@currentStationIndex]
+            @currentEnemy = dealer.nextEnemy
+            @gameState.next @turns, @spaceStations.size
+        end
+    end
+
+    def nextTurn
+        state = @gameState.state
+
+        if state == GameState::AFTERCOMBAT
+            stationState = @currentStation.validState?
+            if stationState
+                @currentStationIndex = (@currentStationIndex+1)% @spaceStations.size
+                @turns += 1
+                @currentStation = @spaceStations[@currentStationIndex]
+                @currentStation.cleanUpMountedItems
+                dealer = CardDealer.instance
+                @currentEnemy = dealer.nextEnemy
+                @gameState.next @turns, @spaceStations.size
+                return true
+            end
+        end
+        false
+    end
+
+    def combat
+        state = @gameState.state
+        if state == GameState::BEFORECOMBAT || state == GameState::INIT
+            return combatGo @currentStation, @currentEnemy    
+        end
+        CombatResult::NOCOMBAT
+    end
+
+
+    def combatGo(station, enemy)
+        ch = @dice.firstShot
+        if ch == GameCharacter::ENEMYSTARSHIP
+            fire = enemy.fire
+            result = station.receiveShot fire
+
+            if result == ShotResult::RESIST
+                fire = station.fire
+                result = enemy.receiveShot fire
+                enemyWins = result == ShotResult::RESIST
+            else
+                enemyWins = true
+            end
+        else
+            fire = station.fire
+            result = enemy.receiveShot fire
+            enemyWins = result == ShotResult::RESIST
+        end
+
+        if enemyWins
+            s = station.speed
+            moves = @dice.spaceStationMoves? s
+            if !moves
+                damage = enemy.damage
+                station.pendingDamage = damage
+                combatResult = CombatResult::ENEMYWINS
+            else
+                station.move
+                combatResult = CombatResult::STATIONESCAPES
+            end
+        else
+            aLoot = enemy.loot
+            station.loot = aLoot
+            combatResult = CombatResult::STATIONWINS
+        end
+        @gameState.next @turns, @spaceStations.size
+        combatResult
+    end
+
     def init_or_aftercombat()
         @gameState.state == GameState::INIT || @gameState.state == GameState::AFTERCOMBAT
     end
 
     def discardHangar()
-        @currentStation.discardHangar() unless init_or_aftercombat
+        @currentStation.discardHangar() if init_or_aftercombat
     end
 
     def discardShieldBooster(i)
-        @currentStation.discardShieldBooster(i) unless init_or_aftercombat
+        @currentStation.discardShieldBooster(i) if init_or_aftercombat
     end
 
     def discardShieldBoosterInHangar(i)
-        @currentStation.discardShieldBoosterInHangar(i) unless init_or_aftercombat
+        @currentStation.discardShieldBoosterInHangar(i) if init_or_aftercombat
     end
 
     def discardWeapon(i)
-        @currentStation.discardWeapon(i) unless init_or_aftercombat
+        @currentStation.discardWeapon(i) if init_or_aftercombat
     end
 
     def discardWeaponInHangar(i)
-        @currentStation.discardWeaponInHangar(i) unless init_or_aftercombat
+        @currentStation.discardWeaponInHangar(i) if init_or_aftercombat
     end
 
     def mountShieldBooster(i)
-        @currentStation.mountShieldBooster(i) unless init_or_aftercombat
+        @currentStation.mountShieldBooster(i) if init_or_aftercombat
     end
 
     def mountWeapon(i)
-        @currentStation.mountWeapon(i) unless init_or_aftercombat
+        @currentStation.mountWeapon(i) if init_or_aftercombat
     end
 
     def haveAWinner()
-        @currentStation.nMedals == 10
+        @currentStation.nMedals >= @@WIN
+    end
+
+    def state
+        @gameState.state
     end
 
     def getUIversion()
